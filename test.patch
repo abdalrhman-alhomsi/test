@@ -1,0 +1,269 @@
+diff --git a/src/H5PDrupal/H5PDrupal.php b/src/H5PDrupal/H5PDrupal.php
+index dfc95974..798f038e 100644
+--- a/src/H5PDrupal/H5PDrupal.php
++++ b/src/H5PDrupal/H5PDrupal.php
+@@ -251,9 +251,9 @@ class H5PDrupal implements \H5PFrameworkInterface {
+     if ($fetchingDisabled || (($hub_is_enabled) || $send_usage_statistics) &&
+         ($last_fetched_at < (time() - 86400))) {
+       // Fetch the library-metadata:
+-      $core = H5PDrupal::getInstance('core');
+-      $core->fetchLibrariesMetadata($fetchingDisabled);
+-      $this->setOption('fetched_library_metadata_on', time());
++      // $core = H5PDrupal::getInstance('core');
++      // $core->fetchLibrariesMetadata($fetchingDisabled);
++      // $this->setOption('fetched_library_metadata_on', time());
+     }
+   }
+ 
+@@ -625,106 +625,106 @@ class H5PDrupal implements \H5PFrameworkInterface {
+    * @param boolean $new
+    */
+   public function saveLibraryData(&$libraryData, $new = TRUE) {
+-    $preloadedJs = $this->pathsToCsv($libraryData, 'preloadedJs');
+-    $preloadedCss =  $this->pathsToCsv($libraryData, 'preloadedCss');
+-    $dropLibraryCss = '';
+-
+-    if (isset($libraryData['dropLibraryCss'])) {
+-      $libs = array();
+-      foreach ($libraryData['dropLibraryCss'] as $lib) {
+-        $libs[] = $lib['machineName'];
+-      }
+-      $dropLibraryCss = implode(', ', $libs);
+-    }
+-
+-    $embedTypes = '';
+-    if (isset($libraryData['embedTypes'])) {
+-      $embedTypes = implode(', ', $libraryData['embedTypes']);
+-    }
+-    if (!isset($libraryData['semantics'])) {
+-      $libraryData['semantics'] = '';
+-    }
+-    if (!isset($libraryData['fullscreen'])) {
+-      $libraryData['fullscreen'] = 0;
+-    }
+-    if (!isset($libraryData['hasIcon'])) {
+-      $libraryData['hasIcon'] = 0;
+-    }
+-
+-    if ($new) {
+-      $libraryId = db_insert('h5p_libraries')
+-        ->fields(array(
+-          'machine_name' => $libraryData['machineName'],
+-          'title' => $libraryData['title'],
+-          'major_version' => $libraryData['majorVersion'],
+-          'minor_version' => $libraryData['minorVersion'],
+-          'patch_version' => $libraryData['patchVersion'],
+-          'runnable' => $libraryData['runnable'],
+-          'fullscreen' => $libraryData['fullscreen'],
+-          'embed_types' => $embedTypes,
+-          'preloaded_js' => $preloadedJs,
+-          'preloaded_css' => $preloadedCss,
+-          'drop_library_css' => $dropLibraryCss,
+-          'semantics' => $libraryData['semantics'],
+-          'has_icon' => $libraryData['hasIcon'] ? 1 : 0,
+-          'metadata_settings' => $libraryData['metadataSettings'],
+-          'add_to' => isset($libraryData['addTo']) ? json_encode($libraryData['addTo']) : NULL,
+-        ))
+-        ->execute();
+-      $libraryData['libraryId'] = $libraryId;
+-      if ($libraryData['runnable']) {
+-        $h5p_first_runnable_saved = $this->getOption('first_runnable_saved', FALSE);
+-        if (! $h5p_first_runnable_saved) {
+-          $this->setOption('first_runnable_saved', 1);
+-        }
+-      }
+-    }
+-    else {
+-      db_update('h5p_libraries')
+-        ->fields(array(
+-          'title' => $libraryData['title'],
+-          'patch_version' => $libraryData['patchVersion'],
+-          'runnable' => $libraryData['runnable'],
+-          'fullscreen' => $libraryData['fullscreen'],
+-          'embed_types' => $embedTypes,
+-          'preloaded_js' => $preloadedJs,
+-          'preloaded_css' => $preloadedCss,
+-          'drop_library_css' => $dropLibraryCss,
+-          'semantics' => $libraryData['semantics'],
+-          'has_icon' => $libraryData['hasIcon'] ? 1 : 0,
+-          'metadata_settings' => $libraryData['metadataSettings'],
+-          'add_to' => isset($libraryData['addTo']) ? json_encode($libraryData['addTo']) : NULL,
+-        ))
+-        ->condition('library_id', $libraryData['libraryId'])
+-        ->execute();
+-      $this->deleteLibraryDependencies($libraryData['libraryId']);
+-    }
+-
+-    // Log library installed or updated
+-    new H5PEvent('library', ($new ? 'create' : 'update'),
+-      NULL, NULL,
+-      $libraryData['machineName'],
+-      $libraryData['majorVersion'] . '.' . $libraryData['minorVersion']
+-    );
+-
+-    // invoke library installed
+-    \Drupal::moduleHandler()->invokeAll('h5p_library_installed', array($libraryData, $new));
+-
+-    db_delete('h5p_libraries_languages')
+-      ->condition('library_id', $libraryData['libraryId'])
+-      ->execute();
+-    if (isset($libraryData['language'])) {
+-      foreach ($libraryData['language'] as $languageCode => $languageJson) {
+-        $id = db_insert('h5p_libraries_languages')
+-          ->fields(array(
+-            'library_id' => $libraryData['libraryId'],
+-            'language_code' => $languageCode,
+-            'language_json' => $languageJson,
+-          ))
+-          ->execute();
+-      }
+-    }
+-    \Drupal::cache()->delete('h5p_library_info_build');
++    // $preloadedJs = $this->pathsToCsv($libraryData, 'preloadedJs');
++    // $preloadedCss =  $this->pathsToCsv($libraryData, 'preloadedCss');
++    // $dropLibraryCss = '';
++
++    // if (isset($libraryData['dropLibraryCss'])) {
++    //   $libs = array();
++    //   foreach ($libraryData['dropLibraryCss'] as $lib) {
++    //     $libs[] = $lib['machineName'];
++    //   }
++    //   $dropLibraryCss = implode(', ', $libs);
++    // }
++
++    // $embedTypes = '';
++    // if (isset($libraryData['embedTypes'])) {
++    //   $embedTypes = implode(', ', $libraryData['embedTypes']);
++    // }
++    // if (!isset($libraryData['semantics'])) {
++    //   $libraryData['semantics'] = '';
++    // }
++    // if (!isset($libraryData['fullscreen'])) {
++    //   $libraryData['fullscreen'] = 0;
++    // }
++    // if (!isset($libraryData['hasIcon'])) {
++    //   $libraryData['hasIcon'] = 0;
++    // }
++
++    // if ($new) {
++    //   $libraryId = db_insert('h5p_libraries')
++    //     ->fields(array(
++    //       'machine_name' => $libraryData['machineName'],
++    //       'title' => $libraryData['title'],
++    //       'major_version' => $libraryData['majorVersion'],
++    //       'minor_version' => $libraryData['minorVersion'],
++    //       'patch_version' => $libraryData['patchVersion'],
++    //       'runnable' => $libraryData['runnable'],
++    //       'fullscreen' => $libraryData['fullscreen'],
++    //       'embed_types' => $embedTypes,
++    //       'preloaded_js' => $preloadedJs,
++    //       'preloaded_css' => $preloadedCss,
++    //       'drop_library_css' => $dropLibraryCss,
++    //       'semantics' => $libraryData['semantics'],
++    //       'has_icon' => $libraryData['hasIcon'] ? 1 : 0,
++    //       'metadata_settings' => $libraryData['metadataSettings'],
++    //       'add_to' => isset($libraryData['addTo']) ? json_encode($libraryData['addTo']) : NULL,
++    //     ))
++    //     ->execute();
++    //   $libraryData['libraryId'] = $libraryId;
++    //   if ($libraryData['runnable']) {
++    //     $h5p_first_runnable_saved = $this->getOption('first_runnable_saved', FALSE);
++    //     if (! $h5p_first_runnable_saved) {
++    //       $this->setOption('first_runnable_saved', 1);
++    //     }
++    //   }
++    // }
++    // else {
++    //   db_update('h5p_libraries')
++    //     ->fields(array(
++    //       'title' => $libraryData['title'],
++    //       'patch_version' => $libraryData['patchVersion'],
++    //       'runnable' => $libraryData['runnable'],
++    //       'fullscreen' => $libraryData['fullscreen'],
++    //       'embed_types' => $embedTypes,
++    //       'preloaded_js' => $preloadedJs,
++    //       'preloaded_css' => $preloadedCss,
++    //       'drop_library_css' => $dropLibraryCss,
++    //       'semantics' => $libraryData['semantics'],
++    //       'has_icon' => $libraryData['hasIcon'] ? 1 : 0,
++    //       'metadata_settings' => $libraryData['metadataSettings'],
++    //       'add_to' => isset($libraryData['addTo']) ? json_encode($libraryData['addTo']) : NULL,
++    //     ))
++    //     ->condition('library_id', $libraryData['libraryId'])
++    //     ->execute();
++    //   $this->deleteLibraryDependencies($libraryData['libraryId']);
++    // }
++
++    // // Log library installed or updated
++    // new H5PEvent('library', ($new ? 'create' : 'update'),
++    //   NULL, NULL,
++    //   $libraryData['machineName'],
++    //   $libraryData['majorVersion'] . '.' . $libraryData['minorVersion']
++    // );
++
++    // // invoke library installed
++    // \Drupal::moduleHandler()->invokeAll('h5p_library_installed', array($libraryData, $new));
++
++    // db_delete('h5p_libraries_languages')
++    //   ->condition('library_id', $libraryData['libraryId'])
++    //   ->execute();
++    // if (isset($libraryData['language'])) {
++    //   foreach ($libraryData['language'] as $languageCode => $languageJson) {
++    //     $id = db_insert('h5p_libraries_languages')
++    //       ->fields(array(
++    //         'library_id' => $libraryData['libraryId'],
++    //         'language_code' => $languageCode,
++    //         'language_json' => $languageJson,
++    //       ))
++    //       ->execute();
++    //   }
++    // }
++    // \Drupal::cache()->delete('h5p_library_info_build');
+   }
+ 
+   /**
+diff --git a/vendor/h5p/h5p-core/h5p.classes.php b/vendor/h5p/h5p-core/h5p.classes.php
+index d8468845..809b11e9 100644
+--- a/vendor/h5p/h5p-core/h5p.classes.php
++++ b/vendor/h5p/h5p-core/h5p.classes.php
+@@ -2764,11 +2764,11 @@ class H5PCore {
+          !preg_match('/^localhost$|^127(?:\.[0-9]+){0,2}\.[0-9]+$|^(?:0*\:)*?:?0*1$/i', $_SERVER['REMOTE_ADDR']))) {
+       if (isset($_SERVER['REMOTE_ADDR']) && filter_var($_SERVER['REMOTE_ADDR'], FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE)) {
+         // Internet
+-        $this->h5pF->setOption('site_type', 'internet');
++        //$this->h5pF->setOption('site_type', 'internet');
+       }
+       elseif ($type === 'local') {
+         // Local network
+-        $this->h5pF->setOption('site_type', 'network');
++        //$this->h5pF->setOption('site_type', 'network');
+       }
+     }
+   }
+@@ -2851,7 +2851,7 @@ class H5PCore {
+       // Successfully retrieved new uuid
+       $json = json_decode($registration);
+       $registrationData['uuid'] = $json->uuid;
+-      $this->h5pF->setOption('site_uuid', $json->uuid);
++      //$this->h5pF->setOption('site_uuid', $json->uuid);
+       $this->h5pF->setInfoMessage(
+         $this->h5pF->t('Your site was successfully registered with the H5P Hub.')
+       );
+@@ -3280,7 +3280,7 @@ class H5PCore {
+ 
+     // Inform of the changes and update timestamp
+     $interface->setInfoMessage($interface->t('Library cache was successfully updated!'));
+-    $interface->setOption('content_type_cache_updated_at', time());
++    //$interface->setOption('content_type_cache_updated_at', time());
+     return $data;
+   }
+ 
+@@ -3354,7 +3354,7 @@ class H5PCore {
+   public function checkSetupForRequirements() {
+     $setup = $this->checkSetupErrorMessage();
+ 
+-    $this->h5pF->setOption('hub_is_enabled', !$setup->disable_hub);
++    //$this->h5pF->setOption('hub_is_enabled', !$setup->disable_hub);
+     if (!empty($setup->errors)) {
+       foreach ($setup->errors as $err) {
+         $this->h5pF->setErrorMessage($err);
