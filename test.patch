@@ -1,5 +1,5 @@
 diff --git a/src/H5PDrupal/H5PDrupal.php b/src/H5PDrupal/H5PDrupal.php
-index dfc95974..798f038e 100644
+index dfc95974..4e61947b 100644
 --- a/src/H5PDrupal/H5PDrupal.php
 +++ b/src/H5PDrupal/H5PDrupal.php
 @@ -251,9 +251,9 @@ class H5PDrupal implements \H5PFrameworkInterface {
@@ -222,6 +222,19 @@ index dfc95974..798f038e 100644
    }
  
    /**
+@@ -1151,9 +1151,9 @@ class H5PDrupal implements \H5PFrameworkInterface {
+         \Drupal::state()->set('h5p.' . $name, $value);
+       }
+       else {
+-        $config = \Drupal::configFactory()->getEditable('h5p.settings');
+-        $config->set("h5p_{$name}", $value);
+-        $config->save();
++        //$config = \Drupal::configFactory()->getEditable('h5p.settings');
++        //$config->set("h5p_{$name}", $value);
++        //$config->save();
+       }
+     }
+   }
 diff --git a/vendor/h5p/h5p-core/h5p.classes.php b/vendor/h5p/h5p-core/h5p.classes.php
 index d8468845..809b11e9 100644
 --- a/vendor/h5p/h5p-core/h5p.classes.php
