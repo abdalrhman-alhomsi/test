@@ -1,0 +1,14 @@
+diff --git a/src/H5PDrupal/H5PDrupal.php b/src/H5PDrupal/H5PDrupal.php
+index dfc95974..2e1f5caa 100644
+--- a/src/H5PDrupal/H5PDrupal.php
++++ b/src/H5PDrupal/H5PDrupal.php
+@@ -17,6 +17,9 @@ class H5PDrupal implements \H5PFrameworkInterface {
+   const STATE_OPTIONS = [
+     'content_type_cache_updated_at',
+     'fetched_library_metadata_on',
++    'h5p_site_uuid',
++    'h5p_first_runnable_saved',
++    'site_type',
+   ];
+   /**
+    * Get an instance of one of the h5p library classes
